@@ -1,0 +1,8 @@
+{
+  "game": "AlienIsolation",
+  "display": "Alien: Isolation",
+  "file_extensions": [".txt"],
+  "unpack_cmd": ["Alien_unpacker.py", "{input}", "{output_csv}"],
+  "pack_cmd": ["Alien_packer.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "ไฟล์เกมเป็น .TXT รูปแบบ [KEY]{VALUE} (มัก utf-16-le) — นามสกุลชนกับ root txt_parser จึงควรเรียกผ่านเมนู Game Tool เท่านั้นไม่ใช่ auto-import ตอนเปิดไฟล์"
+}

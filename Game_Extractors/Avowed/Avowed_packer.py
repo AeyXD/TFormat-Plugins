@@ -4,21 +4,21 @@ import subprocess
 import csv
 import shutil
 
-def pack_locres(input_csv, original_locres, output_locres):
+def pack_locres(original_locres, input_csv, output_locres):
     # Path to UnrealLocres
     unreal_locres_exe = r"E:\Mod_Workspace\Tool\UnrealLocres.exe"
-    
+
     if not os.path.exists(unreal_locres_exe):
-        print(f"Error: {unreal_locres_exe} not found.")
+        print(f"Error: {unreal_locres_exe} not found.", file=sys.stderr)
         sys.exit(1)
         
     temp_csv = output_locres + ".temp.csv"
     
     # 1. Convert from TStudio Format to UnrealLocres format
-    # TStudio CSV format: ID, Original, Translation, Context
+    # TStudio CSV format: ID, Source, Translation, AI_Reference
     # UnrealLocres CSV format: key, source, target
     print("[*] Converting from TStudio CSV to UnrealLocres format...")
-    
+
     with open(input_csv, 'r', encoding='utf-8-sig') as infile, open(temp_csv, 'w', encoding='utf-8-sig', newline='') as outfile:
         reader = csv.reader(infile)
         writer = csv.writer(outfile)
@@ -60,7 +60,7 @@ def pack_locres(input_csv, original_locres, output_locres):
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print("Usage: python Avowed_packer.py <input_tstudio_csv> <original_locres> <output_locres>")
+        print("Usage: python Avowed_packer.py <original_locres> <input_tstudio_csv> <output_locres>", file=sys.stderr)
         sys.exit(1)
-        
+
     pack_locres(sys.argv[1], sys.argv[2], sys.argv[3])

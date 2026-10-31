@@ -15,7 +15,7 @@ def csv_col(reader, *names):
             return lower[n.lower()]
     return None
 
-def pack_fantasian_json(input_csv, original_json, output_json=None):
+def pack_fantasian_json(original_json, input_csv, output_json=None):
     if not output_json:
         output_json = os.path.splitext(original_json)[0] + "_patched.json"
 
@@ -37,7 +37,7 @@ def pack_fantasian_json(input_csv, original_json, output_json=None):
                 translations[key] = translation if translation else source
                 
     if not translations:
-        print("Error: No translations found in CSV.")
+        print("Error: No translations found in CSV.", file=sys.stderr)
         return False
 
     print(f"Loading JSON bundle {original_json}...")
@@ -60,7 +60,7 @@ def pack_fantasian_json(input_csv, original_json, output_json=None):
                     entry['value']['Message'] = new_msg
                     modified_count += 1
     else:
-        print("Error: Invalid JSON structure. Missing original_tree or messageDictionary.")
+        print("Error: Invalid JSON structure. Missing original_tree or messageDictionary.", file=sys.stderr)
         return False
                     
     if modified_count == 0:
@@ -77,19 +77,19 @@ def pack_fantasian_json(input_csv, original_json, output_json=None):
 if __name__ == '__main__':
     print("--- Fantasian Packer (JSON Mode) ---")
     if len(sys.argv) < 3:
-        print("Usage: python Fantasian_packer.py <translated.csv> <original_meta.json> [output_meta.json]")
+        print("Usage: python Fantasian_packer.py <original_meta.json> <translated.csv> [output_meta.json]", file=sys.stderr)
         sys.exit(1)
-        
-    input_csv = sys.argv[1]
-    original_json = sys.argv[2]
+
+    original_json = sys.argv[1]
+    input_csv = sys.argv[2]
     output_json = sys.argv[3] if len(sys.argv) > 3 else None
-    
-    if not os.path.exists(input_csv):
-        print(f"File not found: {input_csv}")
-        sys.exit(1)
-        
+
     if not os.path.exists(original_json):
-        print(f"File not found: {original_json}")
+        print(f"File not found: {original_json}", file=sys.stderr)
         sys.exit(1)
-        
-    pack_fantasian_json(input_csv, original_json, output_json)
+
+    if not os.path.exists(input_csv):
+        print(f"File not found: {input_csv}", file=sys.stderr)
+        sys.exit(1)
+
+    sys.exit(0 if pack_fantasian_json(original_json, input_csv, output_json) else 1)

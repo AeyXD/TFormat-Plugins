@@ -29,23 +29,23 @@ FONT_OVERRIDES = [
 
 def pack_mod(csv_path, base_locres_dir, thai_font_path, output_pak):
     if not os.path.exists(UNREAL_LOCRES_TOOL):
-        print(f"Error: UnrealLocres not found at {UNREAL_LOCRES_TOOL}")
+        print(f"Error: UnrealLocres not found at {UNREAL_LOCRES_TOOL}", file=sys.stderr)
         sys.exit(1)
-        
+
     if not os.path.exists(REPAK_TOOL):
-        print(f"Error: repak.exe not found at {REPAK_TOOL}")
+        print(f"Error: repak.exe not found at {REPAK_TOOL}", file=sys.stderr)
         sys.exit(1)
-        
+
     if not os.path.exists(base_locres_dir):
-        print(f"Error: Base locres dir not found at {base_locres_dir}")
+        print(f"Error: Base locres dir not found at {base_locres_dir}", file=sys.stderr)
         sys.exit(1)
-        
+
     if not os.path.exists(csv_path):
-        print(f"Error: Translated CSV not found at {csv_path}")
+        print(f"Error: Translated CSV not found at {csv_path}", file=sys.stderr)
         sys.exit(1)
-        
-    if not os.path.exists(thai_font_path):
-        print(f"Error: Thai font not found at {thai_font_path}")
+
+    if thai_font_path and not os.path.exists(thai_font_path):
+        print(f"Error: Thai font not found at {thai_font_path}", file=sys.stderr)
         sys.exit(1)
 
     print("Step 1: Grouping TStudio CSV by target...")
@@ -122,10 +122,13 @@ def pack_mod(csv_path, base_locres_dir, thai_font_path, output_pak):
         os.remove(temp_base_locres)
 
     print("Step 3: Setting up UMG Font Spoofing structure...")
-    for rel_path in FONT_OVERRIDES:
-        full_dest = os.path.join(temp_dir, rel_path)
-        os.makedirs(os.path.dirname(full_dest), exist_ok=True)
-        shutil.copy2(thai_font_path, full_dest)
+    if not thai_font_path:
+        print("  (skipped: no --thai-font provided — mod จะไม่มีการแทนที่ฟอนต์)")
+    else:
+        for rel_path in FONT_OVERRIDES:
+            full_dest = os.path.join(temp_dir, rel_path)
+            os.makedirs(os.path.dirname(full_dest), exist_ok=True)
+            shutil.copy2(thai_font_path, full_dest)
 
     print("Step 4: Packing mod with repak...")
     os.makedirs(os.path.dirname(os.path.abspath(output_pak)), exist_ok=True)
@@ -134,7 +137,7 @@ def pack_mod(csv_path, base_locres_dir, thai_font_path, output_pak):
     result_repak = subprocess.run(cmd_repak, capture_output=True, text=True)
     
     if result_repak.returncode != 0:
-        print(f"Error packing mod:\n{result_repak.stderr}")
+        print(f"Error packing mod:\n{result_repak.stderr}", file=sys.stderr)
         sys.exit(1)
 
     print(f"Success! Mod successfully built at: {output_pak}")
@@ -145,12 +148,21 @@ def pack_mod(csv_path, base_locres_dir, thai_font_path, output_pak):
         pass
 
 if __name__ == "__main__":
+    # game-tool convention: outpost_packer.py <base_locres_dir> <input_csv> <output_pak> [--thai-font <font>]
+    if len(sys.argv) >= 4 and not sys.argv[1].startswith('-') and '--csv' not in sys.argv:
+        base_dir, csv_in, out_pak = sys.argv[1], sys.argv[2], sys.argv[3]
+        font = None
+        if '--thai-font' in sys.argv:
+            font = sys.argv[sys.argv.index('--thai-font') + 1]
+        pack_mod(csv_in, base_dir, font, out_pak)
+        sys.exit(0)
+
     parser = argparse.ArgumentParser(description="Pack TStudio CSV and Thai font into a playable Outpost pak mod")
     parser.add_argument("--csv", required=True, help="Path to TStudio translated CSV")
     parser.add_argument("--base-locres-dir", required=True, help="Path to Original Backup root directory containing locres files")
-    parser.add_argument("--thai-font", required=True, help="Path to the Thai TTF font to be injected")
+    parser.add_argument("--thai-font", required=False, default=None, help="Path to the Thai TTF font to be injected")
     parser.add_argument("--output-pak", required=True, help="Path to the output .pak file")
-    
+
     args = parser.parse_args()
     pack_mod(args.csv, args.base_locres_dir, args.thai_font, args.output_pak)
 

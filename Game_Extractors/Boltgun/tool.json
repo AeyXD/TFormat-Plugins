@@ -1,0 +1,8 @@
+{
+  "game": "Boltgun",
+  "display": "Warhammer 40,000: Boltgun",
+  "file_extensions": [".locres"],
+  "unpack_cmd": ["Boltgun_unpacker.py", "{input}", "{output_csv}"],
+  "pack_cmd": ["Boltgun_packer.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "ใช้ stdlib ล้วน (locres v1–3) ไม่ต้องมีเครื่องมือภายนอก · round-trip ผ่านการทดสอบด้วย fixture · นามสกุล .locres ชนกับ built-in ของ TStudio จึงควรเรียกผ่านเมนู Game Tool"
+}

@@ -92,15 +92,15 @@ def read_locres(filepath):
 
 def unpack_locres(input_file, output_csv):
     if not os.path.exists(input_file):
-        print(f"Error: Input file '{input_file}' not found.")
-        return
+        print(f"Error: Input file '{input_file}' not found.", file=sys.stderr)
+        return False
 
     print(f"Loading {input_file}...")
     try:
         _version, namespaces = read_locres(input_file)
     except ValueError as e:
-        print(f"Failed to read locres file: {e}")
-        return
+        print(f"Failed to read locres file: {e}", file=sys.stderr)
+        return False
 
     rows = []
     for ns in namespaces:
@@ -116,11 +116,12 @@ def unpack_locres(input_file, output_csv):
         writer.writerows(rows)
 
     print(f"Successfully unpacked {len(rows)} strings to '{output_csv}'")
+    return True
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python Boltgun_unpacker.py <input.locres> <output.csv>")
+        print("Usage: python Boltgun_unpacker.py <input.locres> <output.csv>", file=sys.stderr)
         sys.exit(1)
 
-    unpack_locres(sys.argv[1], sys.argv[2])
+    sys.exit(0 if unpack_locres(sys.argv[1], sys.argv[2]) else 1)

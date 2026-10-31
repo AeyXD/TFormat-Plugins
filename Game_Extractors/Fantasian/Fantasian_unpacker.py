@@ -23,11 +23,11 @@ def unpack_fantasian_json(input_json, output_csv=None):
             if key and message:
                 extracted.append([key, message, "", ""])
     else:
-        print("Error: Invalid JSON structure. Missing original_tree or messageDictionary.")
+        print("Error: Invalid JSON structure. Missing original_tree or messageDictionary.", file=sys.stderr)
         return False
-                    
+
     if not extracted:
-        print("Error: No messageDictionary entries found in this file.")
+        print("Error: No messageDictionary entries found in this file.", file=sys.stderr)
         return False
         
     print(f"Extracted {len(extracted)} translation strings.")
@@ -44,14 +44,14 @@ def unpack_fantasian_json(input_json, output_csv=None):
 if __name__ == '__main__':
     print("--- Fantasian Unpacker (JSON Mode) ---")
     if len(sys.argv) < 2:
-        print("Usage: python Fantasian_unpacker.py <input_meta.json> [output.csv]")
+        print("Usage: python Fantasian_unpacker.py <input_meta.json> [output.csv]", file=sys.stderr)
         sys.exit(1)
-        
+
     input_file = sys.argv[1]
     output_csv = sys.argv[2] if len(sys.argv) > 2 else None
-    
+
     if not os.path.exists(input_file):
-        print(f"File not found: {input_file}")
+        print(f"File not found: {input_file}", file=sys.stderr)
         sys.exit(1)
-        
-    unpack_fantasian_json(input_file, output_csv)
+
+    sys.exit(0 if unpack_fantasian_json(input_file, output_csv) else 1)

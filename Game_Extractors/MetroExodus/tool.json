@@ -1,0 +1,8 @@
+{
+  "game": "MetroExodus",
+  "display": "Metro Exodus",
+  "file_extensions": [".lng"],
+  "unpack_cmd": ["MetroExodus_lng_tool.py", "{input}", "{output_csv}"],
+  "pack_cmd": ["MetroExodus_lng_tool.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "ใช้ MetroExodus_lng_tool.py (bypass SDK, stdlib ล้วน) — pack จับคู่คำแปลด้วยข้อความต้นฉบับ (value-matching) เพราะ key ใน .lng ถูก compiler สับ · สำหรับฟอนต์ไทยใช้ --mapping mapping.json (PUA) ผ่าน CLI เดิม · MetroExodus_unpacker/packer.py คือเส้นทางเก่าผ่าน Exodus SDK เก็บไว้เพื่ออ้างอิงเท่านั้น"
+}

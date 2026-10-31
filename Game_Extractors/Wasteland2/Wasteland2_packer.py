@@ -14,13 +14,16 @@ def csv_col(reader, *names):
             return lower[n.lower()]
     return None
 
-def pack_csv_to_txt(input_csv, original_txt, output_txt):
+def pack_csv_to_txt(original_txt, input_csv, output_txt=None):
     """
     Packs a TStudio translated CSV back into the Wasteland 2 TXT format,
     maintaining all original comments and formatting.
     """
     translations = {}
-    
+
+    if not output_txt:
+        output_txt = os.path.splitext(original_txt)[0] + "_patched.txt"
+
     with open(input_csv, 'r', encoding='utf-8-sig') as f:
         reader = csv.DictReader(f)
         id_col = csv_col(reader, "ID", "id")
@@ -39,7 +42,7 @@ def pack_csv_to_txt(input_csv, original_txt, output_txt):
                 translations[key] = translation if translation else source
 
     if not translations:
-        print(f"Error: No translations found in {input_csv}")
+        print(f"Error: No translations found in {input_csv}", file=sys.stderr)
         return False
         
     with open(original_txt, 'r', encoding='utf-16') as f:
@@ -75,23 +78,19 @@ def pack_csv_to_txt(input_csv, original_txt, output_txt):
 if __name__ == "__main__":
     print("--- Wasteland 2 Packer ---")
     if len(sys.argv) < 3:
-        print("Usage: python Wasteland2_packer.py <translated.csv> <original.txt> [output.txt]")
+        print("Usage: python Wasteland2_packer.py <original.txt> <translated.csv> [output.txt]", file=sys.stderr)
         sys.exit(1)
-        
-    input_csv = sys.argv[1]
-    original_txt = sys.argv[2]
-    
-    if len(sys.argv) >= 4:
-        output_txt = sys.argv[3]
-    else:
-        output_txt = os.path.splitext(original_txt)[0] + "_patched.txt"
-        
-    if not os.path.exists(input_csv):
-        print(f"File not found: {input_csv}")
-        sys.exit(1)
-        
+
+    original_txt = sys.argv[1]
+    input_csv = sys.argv[2]
+    output_txt = sys.argv[3] if len(sys.argv) > 3 else None
+
     if not os.path.exists(original_txt):
-        print(f"File not found: {original_txt}")
+        print(f"File not found: {original_txt}", file=sys.stderr)
         sys.exit(1)
-        
-    pack_csv_to_txt(input_csv, original_txt, output_txt)
+
+    if not os.path.exists(input_csv):
+        print(f"File not found: {input_csv}", file=sys.stderr)
+        sys.exit(1)
+
+    sys.exit(0 if pack_csv_to_txt(original_txt, input_csv, output_txt) else 1)

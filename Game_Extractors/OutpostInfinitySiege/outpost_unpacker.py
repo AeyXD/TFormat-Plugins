@@ -9,11 +9,11 @@ UNREAL_LOCRES_TOOL = r"E:\Mod_Workspace\Tool\UnrealLocres.exe"
 
 def unpack_locres_dir(locres_dir, output_csv):
     if not os.path.exists(UNREAL_LOCRES_TOOL):
-        print(f"Error: UnrealLocres not found at {UNREAL_LOCRES_TOOL}")
+        print(f"Error: UnrealLocres not found at {UNREAL_LOCRES_TOOL}", file=sys.stderr)
         sys.exit(1)
 
     if not os.path.exists(locres_dir):
-        print(f"Error: Locres directory not found at {locres_dir}")
+        print(f"Error: Locres directory not found at {locres_dir}", file=sys.stderr)
         sys.exit(1)
 
     tstudio_rows = []
@@ -23,7 +23,7 @@ def unpack_locres_dir(locres_dir, output_csv):
     locres_files = glob.glob(pattern, recursive=True)
     
     if not locres_files:
-        print(f"Error: No en/*.locres files found in {locres_dir}")
+        print(f"Error: No en/*.locres files found in {locres_dir}", file=sys.stderr)
         sys.exit(1)
         
     for locres_path in locres_files:
@@ -80,15 +80,20 @@ def unpack_locres_dir(locres_dir, output_csv):
         print(f"Successfully generated TStudio input file at: {output_csv}")
         print(f"Total lines extracted: {len(tstudio_rows)}")
     except Exception as e:
-        print(f"Error writing output CSV: {e}")
+        print(f"Error writing output CSV: {e}", file=sys.stderr)
         sys.exit(1)
 
 
 if __name__ == "__main__":
+    # game-tool convention: outpost_unpacker.py <locres_dir> <output_csv>
+    if len(sys.argv) == 3 and not sys.argv[1].startswith('-'):
+        unpack_locres_dir(sys.argv[1], sys.argv[2])
+        sys.exit(0)
+
     parser = argparse.ArgumentParser(description="Unpack Outpost Infinity Siege locres to TStudio CSV format")
     parser.add_argument("--locres-dir", required=True, help="Path to Original Backup Localization directory")
     parser.add_argument("--output", required=True, help="Path to output TStudio_Input.csv")
-    
+
     args = parser.parse_args()
-    
+
     unpack_locres_dir(args.locres_dir, args.output)

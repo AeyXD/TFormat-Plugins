@@ -8,7 +8,7 @@ def unpack_locres(input_locres, output_csv):
     unreal_locres_exe = r"E:\Mod_Workspace\Tool\UnrealLocres.exe"
     
     if not os.path.exists(unreal_locres_exe):
-        print(f"Error: {unreal_locres_exe} not found.")
+        print(f"Error: {unreal_locres_exe} not found.", file=sys.stderr)
         sys.exit(1)
         
     temp_csv = input_locres + ".temp.csv"
@@ -48,7 +48,7 @@ def unpack_locres(input_locres, output_csv):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python Avowed_unpacker.py <input_locres> <output_csv>")
+        print("Usage: python Avowed_unpacker.py <input_locres> <output_csv>", file=sys.stderr)
         sys.exit(1)
-        
+
     unpack_locres(sys.argv[1], sys.argv[2])

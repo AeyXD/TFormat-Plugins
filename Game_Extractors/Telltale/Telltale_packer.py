@@ -81,25 +81,25 @@ def patch_landb(landb_path, translations_by_offset):
     return patched_count
 
 
-def pack_telltale(input_csv, extracted_folder, output_ttarch=None, game_id=None):
+def pack_telltale(extracted_folder, input_csv, output_ttarch=None, game_id=None):
     """
     นำไฟล์ CSV ที่แปลแล้วไปเขียนทับในไฟล์ .landb ที่แตกไว้
-    จากนั้นใช้ ttarchext.exe บีบอัดกลับเป็น 0.ttarch2 (patch file)
-    
+    จากนั้นใช้ ttarchext.exe บีบอัดกลับเป็น .ttarch2 (patch file)
+
     Args:
-        input_csv (str): path ของไฟล์ CSV ที่แปลแล้ว
         extracted_folder (str): โฟลเดอร์ที่แตกไฟล์ไว้ (มีไฟล์ .landb)
+        input_csv (str): path ของไฟล์ CSV ที่แปลแล้ว
         output_ttarch (str): path ของไฟล์ผลลัพธ์ (ถ้าไม่ระบุจะสร้างอัตโนมัติ)
         game_id (int): รหัสเกม (ถ้าไม่ระบุจะใช้ 67)
-    
+
     Returns:
         str: path ของไฟล์ผลลัพธ์
     """
-    if not os.path.exists(input_csv):
-        raise FileNotFoundError(f"ไม่พบไฟล์ CSV: {input_csv}")
-    
     if not os.path.exists(extracted_folder):
         raise FileNotFoundError(f"ไม่พบโฟลเดอร์: {extracted_folder}")
+
+    if not os.path.exists(input_csv):
+        raise FileNotFoundError(f"ไม่พบไฟล์ CSV: {input_csv}")
     
     # ตั้งค่า output path
     if not output_ttarch:
@@ -174,11 +174,11 @@ def pack_telltale(input_csv, extracted_folder, output_ttarch=None, game_id=None)
     # --- Step 3: บีบอัดกลับเป็น .ttarch2 ด้วย ttarchext ---
     ttarchext = find_ttarchext()
     if not ttarchext:
-        print("\nWarning: ไม่พบ ttarchext.exe!")
-        print("ไฟล์ .landb ที่แก้ไขแล้วถูกเก็บไว้ที่:")
-        print(f"  {patch_folder}")
-        print("คุณสามารถนำไปบีบอัดเองได้ด้วยคำสั่ง:")
-        print(f"  ttarchext.exe -b -V 7 {game_id} output.ttarch2 {patch_folder}")
+        print("\nWarning: ไม่พบ ttarchext.exe!", file=sys.stderr)
+        print("ไฟล์ .landb ที่แก้ไขแล้วถูกเก็บไว้ที่:", file=sys.stderr)
+        print(f"  {patch_folder}", file=sys.stderr)
+        print("คุณสามารถนำไปบีบอัดเองได้ด้วยคำสั่ง:", file=sys.stderr)
+        print(f"  ttarchext.exe -b -V 7 {game_id} output.ttarch2 {patch_folder}", file=sys.stderr)
         return patch_folder
     
     print(f"\nBuilding patch archive: {output_ttarch}")
@@ -200,24 +200,33 @@ def pack_telltale(input_csv, extracted_folder, output_ttarch=None, game_id=None)
         print(f"\nSuccess! Patch file created: {output_ttarch} ({size_kb:.1f} KB)")
         print("วางไฟล์นี้ในโฟลเดอร์ของเกม (ชื่อ 0.ttarch2) เพื่อใช้แปลภาษา")
     else:
-        print("Warning: ไม่พบไฟล์ผลลัพธ์ อาจเกิดข้อผิดพลาดในการบีบอัด")
-    
+        print("Warning: ไม่พบไฟล์ผลลัพธ์ อาจเกิดข้อผิดพลาดในการบีบอัด", file=sys.stderr)
+
     return output_ttarch
 
 
 if __name__ == '__main__':
     print("=== Telltale Packer ===")
-    
+
     if len(sys.argv) < 3:
-        print("\nUsage:")
-        print("  python Telltale_packer.py <translated.csv> <extracted_folder> [output.ttarch2] [game_id]")
-        print("\nExamples:")
-        print("  python Telltale_packer.py translations.csv ./WDC_MenuSeason3_extracted ./0.ttarch2 67")
+        print("\nUsage: python Telltale_packer.py <extracted_folder> <translated.csv> [output.ttarch2] [game_id]", file=sys.stderr)
+        print("Examples:", file=sys.stderr)
+        print("  python Telltale_packer.py ./WDC_MenuSeason3_extracted translations.csv ./0.ttarch2 67", file=sys.stderr)
         sys.exit(1)
-    
-    input_csv = sys.argv[1]
-    extracted_folder = sys.argv[2]
+
+    extracted_folder = sys.argv[1]
+    input_csv = sys.argv[2]
     output_ttarch = sys.argv[3] if len(sys.argv) > 3 else None
     game_id = int(sys.argv[4]) if len(sys.argv) > 4 else None
-    
-    pack_telltale(input_csv, extracted_folder, output_ttarch, game_id)
+
+    try:
+        pack_telltale(extracted_folder, input_csv, output_ttarch, game_id)
+    except (ValueError, FileNotFoundError) as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # exit 0 เฉพาะเมื่อ build ไฟล์ .ttarch2 สำเร็จจริง (ไม่มี ttarchext.exe = exit 1)
+    out_check = output_ttarch or os.path.join(os.path.dirname(os.path.abspath(extracted_folder)), "0.ttarch2")
+    if not os.path.exists(out_check):
+        print("Error: ไม่ได้สร้างไฟล์ .ttarch2 (ดู warning ข้างต้น — อาจไม่มี ttarchext.exe)", file=sys.stderr)
+        sys.exit(1)

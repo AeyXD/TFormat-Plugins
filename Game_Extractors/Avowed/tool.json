@@ -1,0 +1,8 @@
+{
+  "game": "Avowed",
+  "display": "Avowed",
+  "file_extensions": [".locres"],
+  "unpack_cmd": ["Avowed_unpacker.py", "{input}", "{output_csv}"],
+  "pack_cmd": ["Avowed_packer.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "ต้องมี UnrealLocres.exe (Windows-only) ที่ path ที่ฮาร์ดโค้ดไว้ในสคริปต์ — ยังไม่ได้ทดสอบ round-trip บน macOS · หลัง pack ต้องเอา .locres ไป pack ต่อเป็น .utoc/.ucas ด้วย UnrealReZen เอง"
+}

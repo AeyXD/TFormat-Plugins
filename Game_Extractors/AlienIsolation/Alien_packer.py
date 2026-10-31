@@ -15,7 +15,7 @@ def csv_col(reader, *names):
             return lower[n.lower()]
     return None
 
-def pack_alien_isolation(input_csv, original_txt, output_txt=None):
+def pack_alien_isolation(original_txt, input_csv, output_txt=None):
     if not output_txt:
         output_txt = os.path.splitext(original_txt)[0] + "_patched.TXT"
 
@@ -37,7 +37,7 @@ def pack_alien_isolation(input_csv, original_txt, output_txt=None):
                 translations[key] = translation if translation else source
                 
     if not translations:
-        print("Error: No translations found in CSV.")
+        print("Error: No translations found in CSV.", file=sys.stderr)
         return False
 
     print(f"Loading original TXT {original_txt}...")
@@ -99,19 +99,19 @@ def pack_alien_isolation(input_csv, original_txt, output_txt=None):
 if __name__ == '__main__':
     print("--- Alien: Isolation Packer ---")
     if len(sys.argv) < 3:
-        print("Usage: python Alien_packer.py <translated.csv> <original.TXT> [output.TXT]")
+        print("Usage: python Alien_packer.py <original.TXT> <translated.csv> [output.TXT]", file=sys.stderr)
         sys.exit(1)
-        
-    input_csv = sys.argv[1]
-    original_txt = sys.argv[2]
+
+    original_txt = sys.argv[1]
+    input_csv = sys.argv[2]
     output_txt = sys.argv[3] if len(sys.argv) > 3 else None
-    
-    if not os.path.exists(input_csv):
-        print(f"File not found: {input_csv}")
-        sys.exit(1)
-        
+
     if not os.path.exists(original_txt):
-        print(f"File not found: {original_txt}")
+        print(f"File not found: {original_txt}", file=sys.stderr)
         sys.exit(1)
-        
-    pack_alien_isolation(input_csv, original_txt, output_txt)
+
+    if not os.path.exists(input_csv):
+        print(f"File not found: {input_csv}", file=sys.stderr)
+        sys.exit(1)
+
+    sys.exit(0 if pack_alien_isolation(original_txt, input_csv, output_txt) else 1)

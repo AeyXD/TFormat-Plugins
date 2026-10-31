@@ -166,11 +166,11 @@ def csv_col(reader, *names):
 
 def pack_locres(original_locres, translated_csv, output_locres):
     if not os.path.exists(original_locres):
-        print(f"Error: Original locres file '{original_locres}' not found.")
-        return
+        print(f"Error: Original locres file '{original_locres}' not found.", file=sys.stderr)
+        return False
     if not os.path.exists(translated_csv):
-        print(f"Error: Translated CSV file '{translated_csv}' not found.")
-        return
+        print(f"Error: Translated CSV file '{translated_csv}' not found.", file=sys.stderr)
+        return False
 
     # 1. Read translated CSV
     print(f"Reading translations from {translated_csv}...")
@@ -181,8 +181,8 @@ def pack_locres(original_locres, translated_csv, output_locres):
             id_col = csv_col(reader, "ID", "id")
             trans_col = csv_col(reader, "Translation", "translation", "คำแปล")
             if not id_col or not trans_col:
-                print(f"Error: CSV header ไม่ถูกต้อง (ต้องมี ID และ Translation, พบ: {reader.fieldnames})")
-                return
+                print(f"Error: CSV header ไม่ถูกต้อง (ต้องมี ID และ Translation, พบ: {reader.fieldnames})", file=sys.stderr)
+                return False
             for row in reader:
                 row_id = (row.get(id_col) or "").strip()
                 translated_text = row.get(trans_col) or ""
@@ -190,8 +190,8 @@ def pack_locres(original_locres, translated_csv, output_locres):
                 if row_id and translated_text:
                     translations[row_id] = translated_text
     except Exception as e:
-        print(f"Failed to read CSV: {e}")
-        return
+        print(f"Failed to read CSV: {e}", file=sys.stderr)
+        return False
 
     print(f"Loaded {len(translations)} translated strings.")
 
@@ -200,8 +200,8 @@ def pack_locres(original_locres, translated_csv, output_locres):
     try:
         version, namespaces = read_locres(original_locres)
     except ValueError as e:
-        print(f"Failed to read locres file: {e}")
-        return
+        print(f"Failed to read locres file: {e}", file=sys.stderr)
+        return False
 
     # 3. Apply translations
     changed = 0
@@ -217,13 +217,15 @@ def pack_locres(original_locres, translated_csv, output_locres):
     try:
         write_locres(output_locres, version, namespaces)
         print(f"Successfully modified {changed} strings and saved to '{output_locres}'")
+        return True
     except Exception as e:
-        print(f"Failed to write output locres: {e}")
+        print(f"Failed to write output locres: {e}", file=sys.stderr)
+        return False
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print("Usage: python Boltgun_packer.py <original.locres> <translated.csv> <output.locres>")
+        print("Usage: python Boltgun_packer.py <original.locres> <translated.csv> <output.locres>", file=sys.stderr)
         sys.exit(1)
 
-    pack_locres(sys.argv[1], sys.argv[2], sys.argv[3])
+    sys.exit(0 if pack_locres(sys.argv[1], sys.argv[2], sys.argv[3]) else 1)

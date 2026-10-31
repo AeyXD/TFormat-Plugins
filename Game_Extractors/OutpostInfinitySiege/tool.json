@@ -1,0 +1,8 @@
+{
+  "game": "OutpostInfinitySiege",
+  "display": "Outpost: Infinity Siege",
+  "file_extensions": [".locres"],
+  "unpack_cmd": ["outpost_unpacker.py", "{input}", "{output_csv}"],
+  "pack_cmd": ["outpost_packer.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "input ของ unpack คือโฟลเดอร์ที่มี en/*.locres (recursive) ไม่ใช่ไฟล์เดียว · ทั้ง unpack/pack ต้องมี UnrealLocres.exe และ pack ต้องมี repak.exe ด้วย (Windows-only, path ฮาร์ดโค้ดในสคริปต์) · ฟอนต์ไทยใส่ด้วย --thai-font <path> (optional — ไม่ใส่จะไม่แทนที่ฟอนต์) · ยังไม่ได้ทดสอบ round-trip บน macOS"
+}

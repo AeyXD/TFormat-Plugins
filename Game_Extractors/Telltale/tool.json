@@ -1,0 +1,8 @@
+{
+  "game": "Telltale",
+  "display": "Telltale Games (Walking Dead, Wolf Among Us, GOTG ฯลฯ)",
+  "file_extensions": [".ttarch2", ".ttarch"],
+  "unpack_cmd": ["Telltale_unpacker.py", "{input}", "{output}"],
+  "pack_cmd": ["Telltale_packer.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "unpack ได้ 'โฟลเดอร์' ที่มีไฟล์ .landb ไม่ใช่ CSV — แล้วเปิด .landb ต่อใน TStudio ด้วย landb_parser · pack รับ 'โฟลเดอร์ที่แตกไว้' เป็น original · ต้องมี ttarchext.exe (Windows) ทั้งแตกและ build กลับ — ถ้าไม่มี exe ตอน pack สคริปต์จะ patch .landb ไว้ใน _patch_tmp ให้แต่ exit 1 เพราะไม่ได้สร้าง .ttarch2 · game_id เดาจากชื่อไฟล์อัตโนมัติ"
+}

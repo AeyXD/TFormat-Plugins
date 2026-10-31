@@ -1,0 +1,8 @@
+{
+  "game": "Fantasian",
+  "display": "Fantasian",
+  "file_extensions": [".json"],
+  "unpack_cmd": ["Fantasian_unpacker.py", "{input}", "{output_csv}"],
+  "pack_cmd": ["Fantasian_packer.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "input คือ meta.json ที่ dump จาก bundle ของ Unity (มี original_tree/messageDictionary) · นามสกุล .json ชนกับ root json_parser จึงควรเรียกผ่านเมนู Game Tool · ไฟล์ที่ pack ได้ต้องนำกลับไป repack เข้า UnityFS ต่อเอง"
+}

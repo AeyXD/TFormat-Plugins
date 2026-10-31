@@ -1,0 +1,8 @@
+{
+  "game": "Wasteland2",
+  "display": "Wasteland 2",
+  "file_extensions": [".txt"],
+  "unpack_cmd": ["Wasteland2_unpacker.py", "{input}", "{output_csv}"],
+  "pack_cmd": ["Wasteland2_packer.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "ไฟล์เกมเป็น .txt แบบ utf-16 (#Key ตามด้วย =Value) — pack กลับได้ครบโดยคง comment/โครงไฟล์เดิม · นามสกุลชนกับ root txt_parser จึงควรเรียกผ่านเมนู Game Tool"
+}

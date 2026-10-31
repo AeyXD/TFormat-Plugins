@@ -149,22 +149,26 @@ def unpack_multiple(folder, output_base=None, game_id=None):
 
 if __name__ == '__main__':
     print("=== Telltale TTARCH2 Unpacker ===")
-    
+
     if len(sys.argv) < 2:
-        print("\nUsage:")
-        print("  Unpack single file:   python Telltale_unpacker.py <file.ttarch2> [output_folder] [game_id]")
-        print("  Unpack whole folder:  python Telltale_unpacker.py --folder <folder> [game_id]")
-        print("\nGame IDs:")
+        print("\nUsage:", file=sys.stderr)
+        print("  Unpack single file:   python Telltale_unpacker.py <file.ttarch2> [output_folder] [game_id]", file=sys.stderr)
+        print("  Unpack whole folder:  python Telltale_unpacker.py --folder <folder> [game_id]", file=sys.stderr)
+        print("\nGame IDs:", file=sys.stderr)
         for name, gid in GAME_IDS.items():
-            print(f"  {gid:2d}  {name}")
+            print(f"  {gid:2d}  {name}", file=sys.stderr)
         sys.exit(1)
-    
-    if sys.argv[1] == '--folder':
-        folder = sys.argv[2]
-        game_id = int(sys.argv[3]) if len(sys.argv) > 3 else None
-        unpack_multiple(folder, game_id=game_id)
-    else:
-        input_file = sys.argv[1]
-        output_folder = sys.argv[2] if len(sys.argv) > 2 else None
-        game_id = int(sys.argv[3]) if len(sys.argv) > 3 else None
-        unpack_ttarch(input_file, output_folder, game_id)
+
+    try:
+        if sys.argv[1] == '--folder':
+            folder = sys.argv[2]
+            game_id = int(sys.argv[3]) if len(sys.argv) > 3 else None
+            unpack_multiple(folder, game_id=game_id)
+        else:
+            input_file = sys.argv[1]
+            output_folder = sys.argv[2] if len(sys.argv) > 2 else None
+            game_id = int(sys.argv[3]) if len(sys.argv) > 3 else None
+            unpack_ttarch(input_file, output_folder, game_id)
+    except (ValueError, FileNotFoundError) as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)

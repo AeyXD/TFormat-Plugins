@@ -36,6 +36,10 @@ def csv_col(reader, *names):
             return lower[n.lower()]
     return None
 
+def _fail(msg):
+    print(msg, file=sys.stderr)
+    sys.exit(1)
+
 class MetroLngFile:
     def __init__(self):
         self.header = [0, 4, 0, 1, 0]
@@ -197,8 +201,7 @@ class MetroLngFile:
 
 def cmd_unpack(args):
     if len(args) < 2:
-        print('Usage: python MetroExodus_lng_tool.py unpack <input.lng> <output.csv>')
-        return
+        _fail('Usage: MetroExodus_lng_tool.py unpack <input.lng> <output.csv>')
     lng = MetroLngFile()
     count = lng.load(args[0])
     print(f'[*] Loaded {count} entries from {args[0]}')
@@ -208,8 +211,7 @@ def cmd_unpack(args):
 
 def cmd_pack(args):
     if len(args) < 3:
-        print('Usage: python MetroExodus_lng_tool.py pack <original.lng> <translations.csv> <output.lng> [--mapping mapping.json]')
-        return
+        _fail('Usage: MetroExodus_lng_tool.py pack <original.lng> <translations.csv> <output.lng> [--mapping mapping.json]')
     mapping = None
     for i, a in enumerate(args):
         if a == '--mapping' and i + 1 < len(args):
@@ -227,8 +229,7 @@ def cmd_pack(args):
 
 def cmd_search(args):
     if len(args) < 2:
-        print('Usage: python MetroExodus_lng_tool.py search <input.lng> <keyword>')
-        return
+        _fail('Usage: MetroExodus_lng_tool.py search <input.lng> <keyword>')
     lng = MetroLngFile()
     count = lng.load(args[0])
     print(f'[*] Loaded {count} entries')
@@ -241,8 +242,7 @@ def cmd_search(args):
 
 def cmd_replace(args):
     if len(args) < 4:
-        print('Usage: python MetroExodus_lng_tool.py replace <input.lng> <output.lng> <search_text> <replace_text>')
-        return
+        _fail('Usage: MetroExodus_lng_tool.py replace <input.lng> <output.lng> <search_text> <replace_text>')
     lng = MetroLngFile()
     count = lng.load(args[0])
     print(f'[*] Loaded {count} entries from {args[0]}')
@@ -255,23 +255,31 @@ def cmd_replace(args):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print('=== Metro Exodus LNG Tool v3 (CLI) ===')
-        print('Commands:')
-        print('  unpack   <input.lng> <output.csv>')
-        print('  pack     <original.lng> <translations.csv> <output.lng> [--mapping mapping.json]')
-        print('  search   <input.lng> <keyword>')
-        print('  replace  <input.lng> <output.lng> <search_text> <replace_text>')
-        sys.exit(1)
-    
-    cmd = sys.argv[1]
-    if cmd == 'unpack':
-        cmd_unpack(sys.argv[2:])
-    elif cmd == 'pack':
-        cmd_pack(sys.argv[2:])
-    elif cmd == 'search':
-        cmd_search(sys.argv[2:])
-    elif cmd == 'replace':
-        cmd_replace(sys.argv[2:])
+    args = sys.argv[1:]
+    if not args:
+        _fail(
+            'Usage (game-tool convention):\n'
+            '  MetroExodus_lng_tool.py <input.lng> <output.csv>            (unpack)\n'
+            '  MetroExodus_lng_tool.py <original.lng> <csv> <output.lng>   (pack)\n'
+            'Legacy subcommands: unpack | pack | search | replace <args...>'
+        )
+
+    if args[0] in ('unpack', 'pack', 'search', 'replace'):
+        cmd = args[0]
+        rest = args[1:]
+        if cmd == 'unpack':
+            cmd_unpack(rest)
+        elif cmd == 'pack':
+            cmd_pack(rest)
+        elif cmd == 'search':
+            cmd_search(rest)
+        else:
+            cmd_replace(rest)
+    elif len(args) == 2:
+        # game-tool unpack: <input.lng> <output.csv>
+        cmd_unpack(args)
+    elif len(args) == 3:
+        # game-tool pack: <original.lng> <csv> <output.lng>
+        cmd_pack(args)
     else:
-        print(f'Unknown command: {cmd}')
+        _fail(f'Unknown usage: {" ".join(args)}')

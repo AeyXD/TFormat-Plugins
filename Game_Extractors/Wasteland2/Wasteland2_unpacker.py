@@ -27,7 +27,7 @@ def unpack_txt_to_csv(input_txt, output_csv):
             current_key = None # reset for next pair
             
     if not entries:
-        print(f"No valid #Key and =Value pairs found in {input_txt}")
+        print(f"No valid #Key and =Value pairs found in {input_txt}", file=sys.stderr)
         return False
         
     with open(output_csv, 'w', encoding='utf-8-sig', newline='') as f:
@@ -41,19 +41,15 @@ def unpack_txt_to_csv(input_txt, output_csv):
 
 if __name__ == "__main__":
     print("--- Wasteland 2 Unpacker ---")
-    if len(sys.argv) < 2:
-        print("Usage: python Wasteland2_unpacker.py <input.txt> [output.csv]")
+    if len(sys.argv) < 3:
+        print("Usage: python Wasteland2_unpacker.py <input.txt> <output.csv>", file=sys.stderr)
         sys.exit(1)
-        
+
     input_file = sys.argv[1]
-    
-    if len(sys.argv) >= 3:
-        output_file = sys.argv[2]
-    else:
-        output_file = os.path.splitext(input_file)[0] + "_tstudio.csv"
-        
+    output_file = sys.argv[2]
+
     if not os.path.exists(input_file):
-        print(f"File not found: {input_file}")
+        print(f"File not found: {input_file}", file=sys.stderr)
         sys.exit(1)
-        
-    unpack_txt_to_csv(input_file, output_file)
+
+    sys.exit(0 if unpack_txt_to_csv(input_file, output_file) else 1)
