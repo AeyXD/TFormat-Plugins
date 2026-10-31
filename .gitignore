@@ -1,0 +1,18 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# เครื่องมือ/ไฟล์เกมภายนอกที่ห้าม commit
+*.exe
+*.ttarch2
+*.pak
+
+# ผลลัพธ์ parser/packer ที่สร้างใหม่ได้
+*_parsed.csv
+*_parsed_meta.json
+*_patched.*
+*_tstudio.csv
+output_*.csv

@@ -12,10 +12,13 @@
 
 ## งานค้าง / แนวทาง
 
-1. **แผนแก้ไข Phase 0–6** เสนอแล้วใน session 2026-10-31 (จัด repo+gitignore → normalize CSV
-   header ให้เหลือสัญญาเดียว → ถอด pylocres จาก Boltgun → เอา path ฮาร์ดโค้ดออก →
-   ปิดช่อง deploy-back ของ json_parser → ระบบทดสอบ unittest → เก็บรายละเอียดรอบคาบ)
-   ยังไม่ได้เริ่มทำ — รอเจ้าของสั่งเริ่ม phase ใด
+1. **แผนแก้ไข Phase 0–6** เสนอและเริ่มทำแล้วใน session 2026-10-31:
+   - ✅ **Phase 0 เสร็จ** — เพิ่ม `.gitignore`, ย้ายตัวอย่างทดสอบไป `tests/fixtures/`
+     (MetroExodus: stable_us.lng + CSV 4 ไฟล์, Boltgun: test.csv, Outpost: TStudio_Input.csv),
+     ลบ `__pycache__/` ทั้ง 5 โฟลเดอร์ + Test_Output.pak + output_sdk.csv,
+     smoke test import ผ่าน 18 โมดูล + lng_tool round-trip ผ่าน (188,559 entries)
+   - ⏳ เหลือ Phase 1–6 (normalize CSV header → ถอด pylocres → path ฮาร์ดโค้ด →
+     json deploy-back → ระบบทดสอบ unittest → เก็บรายละเอียดรอบคาบ) — รอเจ้าของสั่งเริ่มต่อ phase ใด
 2. **merge กลับ upstream** จะทำให้ plugin ชุดใหม่ (Telltale / Alien: Isolation / Fantasian)
    ไปถึงมือผู้ใช้ TStudio จริง — แต่ต้องรอคำสั่งเจ้าของก่อนทำ PR เสมอ (กฎ ⛔ ใน AGENTS.md)
 3. ถ้ามี session งาน parser ใหม่: ทำตามสัญญาใน `AGENTS.md` → ทดสอบแบบ `parent_widget=None`
