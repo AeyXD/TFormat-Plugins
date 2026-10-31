@@ -84,7 +84,7 @@ def convert_to_csv(filepath, parent_widget=None):
     with open(csv_out, 'w', encoding='utf-8-sig', newline='') as f:
         writer = csv.writer(f)
         # TStudio Native Compatibility Headers
-        writer.writerow(["ID", "ต้นฉบับ", "คำแปล", "AI_Reference"])
+        writer.writerow(["ID", "Source", "Translation", "AI_Reference"])
         for lid, text in entries:
             writer.writerow([lid, text, '', ''])
             

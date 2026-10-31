@@ -2,6 +2,18 @@ import os
 import csv
 import sys
 
+def csv_col(reader, *names):
+    """คืนชื่อคอลัมน์จริงตัวแรกที่ตรงกับ names (case-insensitive, รองรับ header เก่า
+    เช่น original/translation หรือ ต้นฉบับ/คำแปล)"""
+    fields = reader.fieldnames or []
+    lower = {str(x).lower().strip(): x for x in fields if x}
+    for n in names:
+        if n in fields:
+            return n
+        if n.lower() in lower:
+            return lower[n.lower()]
+    return None
+
 def pack_csv_to_txt(input_csv, original_txt, output_txt):
     """
     Packs a TStudio translated CSV back into the Wasteland 2 TXT format,
@@ -11,11 +23,17 @@ def pack_csv_to_txt(input_csv, original_txt, output_txt):
     
     with open(input_csv, 'r', encoding='utf-8-sig') as f:
         reader = csv.DictReader(f)
+        id_col = csv_col(reader, "ID", "id")
+        src_col = csv_col(reader, "Source", "original", "Original", "ต้นฉบับ")
+        trans_col = csv_col(reader, "Translation", "translation", "คำแปล")
+        if not id_col or not trans_col:
+            print(f"Error: CSV header ไม่ถูกต้อง (ต้องมี ID และ Translation, พบ: {reader.fieldnames})")
+            return False
         for row in reader:
-            key = row.get("ID", "").strip()
-            translation = row.get("Translation", "").strip()
-            source = row.get("Source", "").strip()
-            
+            key = (row.get(id_col) or "").strip()
+            translation = (row.get(trans_col) or "").strip()
+            source = (row.get(src_col) or "").strip() if src_col else ""
+
             if key:
                 # Use translation if available, otherwise fallback to source
                 translations[key] = translation if translation else source

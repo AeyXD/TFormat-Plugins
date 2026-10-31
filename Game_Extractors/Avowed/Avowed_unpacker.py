@@ -20,7 +20,7 @@ def unpack_locres(input_locres, output_csv):
     
     # 2. Convert to TStudio Format
     # UnrealLocres CSV format: key, source, target
-    # TStudio CSV format: ID, Original, Translation, Context
+    # TStudio CSV format: ID, Source, Translation, AI_Reference
     print("[*] Converting to TStudio CSV format...")
     
     with open(temp_csv, 'r', encoding='utf-8-sig') as infile, open(output_csv, 'w', encoding='utf-8-sig', newline='') as outfile:
@@ -31,7 +31,7 @@ def unpack_locres(input_locres, output_csv):
         header = next(reader, None)
         
         # Write TStudio header
-        writer.writerow(["ID", "Original", "Translation", "Context"])
+        writer.writerow(["ID", "Source", "Translation", "AI_Reference"])
         
         for row in reader:
             if len(row) >= 3:

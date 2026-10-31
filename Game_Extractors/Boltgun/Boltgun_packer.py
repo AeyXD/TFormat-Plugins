@@ -8,6 +8,18 @@ except ImportError:
     print("Error: pylocres is not installed. Please install it using 'pip install pylocres'")
     sys.exit(1)
 
+def csv_col(reader, *names):
+    """คืนชื่อคอลัมน์จริงตัวแรกที่ตรงกับ names (case-insensitive, รองรับ header เก่า
+    เช่น original/translation หรือ ต้นฉบับ/คำแปล)"""
+    fields = reader.fieldnames or []
+    lower = {str(x).lower().strip(): x for x in fields if x}
+    for n in names:
+        if n in fields:
+            return n
+        if n.lower() in lower:
+            return lower[n.lower()]
+    return None
+
 def pack_locres(original_locres, translated_csv, output_locres):
     if not os.path.exists(original_locres):
         print(f"Error: Original locres file '{original_locres}' not found.")
@@ -22,10 +34,14 @@ def pack_locres(original_locres, translated_csv, output_locres):
     try:
         with open(translated_csv, 'r', encoding='utf-8-sig', errors='replace') as f:
             reader = csv.DictReader(f)
+            id_col = csv_col(reader, "ID", "id")
+            trans_col = csv_col(reader, "Translation", "translation", "คำแปล")
+            if not id_col or not trans_col:
+                print(f"Error: CSV header ไม่ถูกต้อง (ต้องมี ID และ Translation, พบ: {reader.fieldnames})")
+                return
             for row in reader:
-                # Standard TStudio format has "ID" and "Translation"
-                row_id = row.get("ID", "").strip()
-                translated_text = row.get("Translation", "")
+                row_id = (row.get(id_col) or "").strip()
+                translated_text = row.get(trans_col) or ""
                 # Only use translation if it is not empty
                 if row_id and translated_text:
                     translations[row_id] = translated_text

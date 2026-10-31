@@ -24,6 +24,18 @@ import os
 
 sys.stdout.reconfigure(encoding='utf-8')
 
+def csv_col(reader, *names):
+    """คืนชื่อคอลัมน์จริงตัวแรกที่ตรงกับ names (case-insensitive, รองรับ header เก่า
+    เช่น original/translation หรือ ต้นฉบับ/คำแปล)"""
+    fields = reader.fieldnames or []
+    lower = {str(x).lower().strip(): x for x in fields if x}
+    for n in names:
+        if n in fields:
+            return n
+        if n.lower() in lower:
+            return lower[n.lower()]
+    return None
+
 class MetroLngFile:
     def __init__(self):
         self.header = [0, 4, 0, 1, 0]
@@ -112,9 +124,9 @@ class MetroLngFile:
     def to_csv(self, filepath):
         with open(filepath, 'w', encoding='utf-8', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(['id', 'original', 'translation'])
+            writer.writerow(['ID', 'Source', 'Translation', 'AI_Reference'])
             for value, key in self.entries:
-                writer.writerow([key, value, value])
+                writer.writerow([key, value, value, ''])
         return len(self.entries)
     
     def replace_by_value(self, search_text, replace_text):
@@ -140,9 +152,14 @@ class MetroLngFile:
         translations = {}
         with open(csv_filepath, 'r', encoding='utf-8', newline='') as f:
             reader = csv.DictReader(f)
+            src_col = csv_col(reader, 'Source', 'original', 'Original', 'ต้นฉบับ')
+            trans_col = csv_col(reader, 'Translation', 'translation', 'คำแปล')
+            if not src_col or not trans_col:
+                print(f'[ERROR] ไม่พบคอลัมน์ Source/Translation ใน {csv_filepath} (header ที่เจอ: {reader.fieldnames})')
+                return 0
             for row in reader:
-                orig = row.get('original', '').strip()
-                trans = row.get('translation', '').strip()
+                orig = (row.get(src_col) or '').strip()
+                trans = (row.get(trans_col) or '').strip()
                 if orig and trans and orig != trans:
                     translations[orig] = trans
         

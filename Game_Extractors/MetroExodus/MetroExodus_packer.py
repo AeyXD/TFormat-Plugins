@@ -13,6 +13,18 @@ except ImportError:
     print("[Warning] pywinauto is not installed. SDK Automation will be disabled.")
     print("Install it via: pip install pywinauto")
 
+def csv_col(reader, *names):
+    """คืนชื่อคอลัมน์จริงตัวแรกที่ตรงกับ names (case-insensitive, รองรับ header เก่า
+    เช่น original/translation หรือ ต้นฉบับ/คำแปล)"""
+    fields = reader.fieldnames or []
+    lower = {str(x).lower().strip(): x for x in fields if x}
+    for n in names:
+        if n in fields:
+            return n
+        if n.lower() in lower:
+            return lower[n.lower()]
+    return None
+
 def load_pua_mapping(mapping_path):
     if not os.path.exists(mapping_path):
         print(f"[Error] Mapping file not found at {mapping_path}")
@@ -59,12 +71,18 @@ def pack_metro_csv(tstudio_csv, output_sdk_csv, mapping_path, target_lang_col="c
     
     with open(tstudio_csv, 'r', encoding='utf-8', newline='') as f:
         reader = csv.DictReader(f)
+        id_col = csv_col(reader, 'ID', 'id')
+        src_col = csv_col(reader, 'Source', 'original', 'Original', 'ต้นฉบับ')
+        trans_col = csv_col(reader, 'Translation', 'translation', 'คำแปล')
+        if not id_col or not trans_col:
+            print(f"[Error] ไม่พบคอลัมน์ ID/Translation ใน {tstudio_csv} (header ที่เจอ: {reader.fieldnames})")
+            return False
         for row in reader:
-            key = row.get('id', '').strip()
+            key = (row.get(id_col) or '').strip()
             # If translation is empty, fallback to original
-            translation = row.get('translation', '')
+            translation = row.get(trans_col) or ''
             if not translation.strip():
-                translation = row.get('original', '')
+                translation = row.get(src_col) or ''
                 
             pua_translation = apply_pua(translation, mapping)
             

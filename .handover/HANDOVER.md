@@ -17,7 +17,19 @@
      (MetroExodus: stable_us.lng + CSV 4 ไฟล์, Boltgun: test.csv, Outpost: TStudio_Input.csv),
      ลบ `__pycache__/` ทั้ง 5 โฟลเดอร์ + Test_Output.pak + output_sdk.csv,
      smoke test import ผ่าน 18 โมดูล + lng_tool round-trip ผ่าน (188,559 entries)
-   - ⏳ เหลือ Phase 1–6 (normalize CSV header → ถอด pylocres → path ฮาร์ดโค้ด →
+   - ✅ **Phase 1 เสร็จ (2026-10-31)** — CSV header ทั้ง repo เป็นมาตรฐานเดียว
+     `ID, Source, Translation, AI_Reference`: แก้ writer 4 ไฟล์ (json_parser เดิมใช้ header ไทย,
+     Avowed_unpacker, MetroExodus_unpacker, lng_tool.to_csv เดิมใช้ lowercase 3 คอลัมน์)
+     + reader 7 ไฟล์ให้ tolerant ต่อ header เก่าผ่าน helper `csv_col` (ยอมรับ
+     original/translation/ต้นฉบับ/คำแปล) ป้องกัน silent no-op เวลาเจอ CSV เก่าในมือนักแปล —
+     ตรวจแล้วว่า TStudio (`is_standard_csv` ใน tstudio_core) ผ่านด่านแบบไม่เด้ง
+     SmartImportDialog หลังแก้ · ทดสอบ 24 checks ผ่าน (parser 6 ตัว + lng pack ทั้ง 3 ฟอร์แมต
+     + SDK pair + tolerance Thai-header + Telltale patch + migrate) · Boltgun_packer ตรวจด้วย
+     py_compile เท่าที่ทำได้บน macOS (pylocres ยังติดตั้งไม่ได้ — จะหมดเรื่องใน Phase 2)
+     · เพิ่ม fixture `tests/fixtures/MetroExodus/main_menu_standard.csv` (เก็บ fixture
+     ฟอร์แมตเก่าไว้ทดสอบ path tolerance) · พบระหว่างทำ: THub-Launcher สำเนาในเครื่องดึง
+     plugin จาก fork (AeyXD) ตรง ๆ และ cache ท้องถิ่นชนะ cloud — rollout ไม่ใช่ทันทีทั้งหมด
+   - ⏳ เหลือ Phase 2–6 (ถอด pylocres → path ฮาร์ดโค้ด →
      json deploy-back → ระบบทดสอบ unittest → เก็บรายละเอียดรอบคาบ) — รอเจ้าของสั่งเริ่มต่อ phase ใด
 2. **merge กลับ upstream** จะทำให้ plugin ชุดใหม่ (Telltale / Alien: Isolation / Fantasian)
    ไปถึงมือผู้ใช้ TStudio จริง — แต่ต้องรอคำสั่งเจ้าของก่อนทำ PR เสมอ (กฎ ⛔ ใน AGENTS.md)

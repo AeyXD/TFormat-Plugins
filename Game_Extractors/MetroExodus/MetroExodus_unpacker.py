@@ -5,7 +5,7 @@ import sys
 def unpack_metro_csv(input_csv, output_csv, source_lang_col="en"):
     """
     Converts an exported Metro Exodus SDK CSV into the standard TStudio CSV format.
-    TStudio expects: id, original, translation
+    TStudio expects: ID, Source, Translation, AI_Reference
     """
     if not os.path.exists(input_csv):
         print(f"[Error] Could not find SDK Exported CSV at {input_csv}")
@@ -64,14 +64,15 @@ def unpack_metro_csv(input_csv, output_csv, source_lang_col="en"):
             
             if key:
                 tstudio_data.append({
-                    'id': key,
-                    'original': original,
-                    'translation': original # Init with original
+                    'ID': key,
+                    'Source': original,
+                    'Translation': original, # Init with original
+                    'AI_Reference': ''
                 })
-                
+
     # Write to TStudio format
     with open(output_csv, 'w', encoding='utf-8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=['id', 'original', 'translation'])
+        writer = csv.DictWriter(f, fieldnames=['ID', 'Source', 'Translation', 'AI_Reference'])
         writer.writeheader()
         writer.writerows(tstudio_data)
         
