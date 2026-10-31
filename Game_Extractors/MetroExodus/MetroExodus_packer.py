@@ -10,8 +10,6 @@ try:
     HAS_PYWINAUTO = True
 except ImportError:
     HAS_PYWINAUTO = False
-    print("[Warning] pywinauto is not installed. SDK Automation will be disabled.")
-    print("Install it via: pip install pywinauto")
 
 def csv_col(reader, *names):
     """คืนชื่อคอลัมน์จริงตัวแรกที่ตรงกับ names (case-insensitive, รองรับ header เก่า
