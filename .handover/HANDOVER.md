@@ -1,10 +1,9 @@
 # HANDOVER — TFormat-Plugins
 
 **snapshot:** 2026-11-01 · เสร็จ: docs commit · Phase 0–2 (แผนเดิม) · Phase A (game-tool
-contract — manifest 8/8 เกม) · **Phase A2 (ฟิลด์ `line_break` ตาม
-`../docs/spec-thaiwrap-bridge.md` ระยะสอง — เพิ่มเข้า contract ใน AGENTS.md แล้ว
-แต่ omit ใน tool.json ทั้ง 8 เกมเพราะยังไม่มีเกมไหนพิสูจน์จากการใช้จริง)** ·
-รายละเอียดงานเก่าดูใน git log
+contract — manifest 8/8 เกม) · Phase A2 (ฟิลด์ `line_break` ใน contract — omit ทั้งหมด) ·
+**Phase S1 (Game Tool "Subtitles" ตาม `../docs/spec-vox-whisper.md` — manifest ครบ 9/9
+โฟลเดอร์: 8 เกม + Subtitles)** · รายละเอียดงานเก่าดูใน git log
 **สถานะ git:** `main` sync origin · กฎ ⛔ ห้าม agent ทำ PR กลับ upstream เอง (ดู AGENTS.md ข้อ 6)
 
 ## บริบท
@@ -47,6 +46,24 @@ contract — manifest 8/8 เกม) · **Phase A2 (ฟิลด์ `line_break`
    ตรวจ 33/33 ผ่าน: JSON valid 8 ไฟล์ + ไม่มี line_break หลุดเข้า + manifest structure
    + root parser header + Boltgun round-trip ยังผ่าน · **THL เริ่ม Phase B2 ได้**
    (ย้ำ: ทุกเกมตอนนี้ resolve ไป fallback ตารางนามสกุล — ยังไม่มีค่าจาก manifest เลย)
+1c. **Phase S1 เสร็จ (2026-11-01)** — Game Tool "Subtitles" ตาม
+   `../docs/spec-vox-whisper.md` · **manifest ครบ 9/9 โฟลเดอร์ (8 เกม + Subtitles)**
+   — THL เริ่ม Phase S2 (Whisper ใน TVox) ได้:
+   - `Game_Extractors/Subtitles/srt_unpacker.py` — SRT → CSV กลาง · **ID ฝังเวลาครบ
+     `srt::<index>::<start_ms>::<end_ms>`** (self-contained deploy กลับได้ ไม่ต้องมี
+     _meta.json — แก้จุดอ่อนของ root srt_parser ที่ pack กลับไม่ได้) · หลายบรรทัดรวม
+     ด้วยช่องว่าง · รับ CRLF/LF · timestamp ยอมรับทั้ง `,` และ `.`
+   - `srt_packer.py` — CSV → SRT: เรียงเลขลำดับใหม่ 1..N ตามเวลาเริ่ม · เวลาเดิมเป๊ะ ms
+     · ใช้คอลัมน์ Translation ตรง ๆ (ว่าง = เขียนว่าง + เตือน stderr **ไม่ fallback ไป
+     Source**) · รับ `-` แทน original (packer ไม่อ่านต้นฉบับ — เตือนแต่ไม่พังถ้า path
+     ไม่มี) · คง ZWSP · เขียน CRLF · ไม่แตะไฟล์ต้นฉบับ
+   - `tool.json`: game "Subtitles" · `.srt` · **line_break omit ตามกติกา ⛔**
+     · notes_th ระบุชนกับ root srt_parser (ID คนละระบบ) ให้ใช้ผ่านเมนู Game Tool
+   - fixture `tests/fixtures/Subtitles/sample.srt` (CRLF · ไทย+อังกฤษ+หลายบรรทัด+
+     เวลาข้ามชั่วโมง) · AGENTS.md อัปเดตรายการโฟลเดอร์ (9) + สถานะ line_break
+   - ทดสอบ 36/36 ผ่าน: round-trip เวลาตรงทุก ms + เลขใหม่ + ไทยครบ + ZWSP 4 จุด
+     คงอยู่ + `-` ได้ + Translation ว่างไม่ fallback + SRT พัง exit≥1 (stderr ไทย) +
+     LF-only ได้ + manifest 9/9 + regression (root parser headers + Boltgun round-trip)
 2. **แผนแก้ไข Phase 0–6 เดิม**: ✅ 0 ✅ 1 ✅ 2 · ⏳ เหลือ 3–6 (path ฮาร์ดโค้ด (Avowed/
    Outpost manifest ระบุใน notes_th ว่า path ยังฮาร์ดโค้ด — Phase 3 ยังจำเป็น) →
    json deploy-back → ระบบทดสอบ unittest (ควรยกชุดทดสอบ Phase A เข้าไปด้วย) →

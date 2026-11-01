@@ -9,7 +9,8 @@
 
 - `*_parser.py` (root) — parser รูปแบบไฟล์ทั่วไป: `json` `lang` `landb` `srt` `txt` `vtt`
 - `Game_Extractors/` — unpacker/packer เฉพาะเกม 8 เกม (AlienIsolation, Avowed, Boltgun, Fantasian,
-  MetroExodus, OutpostInfinitySiege, Telltale, Wasteland2) · ทุกโฟลเดอร์มี `tool.json` manifest
+  MetroExodus, OutpostInfinitySiege, Telltale, Wasteland2) + โฟลเดอร์ `Subtitles` (เครื่องมือซับ
+  SRT สำหรับ workflow Whisper — ไม่ใช่เกม) · ทุกโฟลเดอร์มี `tool.json` manifest
   (ดูหัวข้อ "Game Tool contract" ด้านล่าง)
 
 ## กฎเหล็ก
@@ -48,7 +49,8 @@ subprocess — spec เต็มที่ `../docs/spec-game-tools.md`):
 **⛔ กติกา `line_break`: เติมเฉพาะค่าที่พิสูจน์จากเกมจริง** (ใช้จริงในเกมแล้วเห็นผล หรือคัมภีร์
 ระบุชัด) — เกมที่ยังไม่พิสูจน์ **omit ฟิลด์นี้ไว้ ห้ามเดาใส่** เพราะโหมด auto เชื่อค่านี้เป็น
 ชั้นแรก · เมื่อเจ้าของยืนยันพฤติกรรมจริงของเกมใด ให้เติม/แก้ฟิลด์นี้ **commit เดียวจบ**
-· สถานะปัจจุบัน: ทั้ง 8 เกมยังไม่มีเกมไหนได้รับการพิสูจน์ → `tool.json` ทุกไฟล์ omit ฟิลด์นี้
+· สถานะปัจจุบัน: ทั้ง 9 โฟลเดอร์ (8 เกม + Subtitles) ยังไม่มีตัวไหนได้รับการพิสูจน์ →
+`tool.json` ทุกไฟล์ omit ฟิลด์นี้
 
 ## ⚠️ ข้อควรรู้ก่อนส่งมอบ
 

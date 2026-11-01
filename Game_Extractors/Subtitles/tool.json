@@ -1,0 +1,8 @@
+{
+  "game": "Subtitles",
+  "display": "ซับซับ SRT (Subtitles)",
+  "file_extensions": [".srt"],
+  "unpack_cmd": ["srt_unpacker.py", "{input}", "{output_csv}"],
+  "pack_cmd": ["srt_packer.py", "{original}", "{csv}", "{output}"],
+  "notes_th": "ไม่ใช่เกม — เป็นเครื่องมือซับ SRT สำหรับ workflow ถอดเสียง Whisper (spec ../docs/spec-vox-whisper.md) · ID ฝังเวลา srt::<index>::<start_ms>::<end_ms> จึง pack กลับจาก CSV เดียวได้ และ packer รับ '-' แทนไฟล์ต้นฉบับ (ไม่ได้อ่านมัน) · pack ใช้คอลัมน์ Translation ตรง ๆ ไม่ fallback ไป Source · นามสกุล .srt ชนกับ root srt_parser (ID คนละระบบ — อันนั้น pack กลับไม่ได้) จึงควรเรียกผ่านเมนู Game Tool · รอบนี้รองรับ .srt เท่านั้น (VTT รอบสอง)"
+}
