@@ -9,7 +9,8 @@
 
 - `*_parser.py` (root) — parser รูปแบบไฟล์ทั่วไป: `json` `lang` `landb` `srt` `txt` `vtt`
 - `Game_Extractors/` — unpacker/packer เฉพาะเกม 8 เกม (AlienIsolation, Avowed, Boltgun, Fantasian,
-  MetroExodus, OutpostInfinitySiege, Telltale, Wasteland2)
+  MetroExodus, OutpostInfinitySiege, Telltale, Wasteland2) · ทุกโฟลเดอร์มี `tool.json` manifest
+  (ดูหัวข้อ "Game Tool contract" ด้านล่าง)
 
 ## กฎเหล็ก
 
@@ -29,6 +30,25 @@
    จบ session ที่กระทบงาน → อัปเดต `.handover/HANDOVER.md` ของ repo นี้
 6. **⛔ ส่ง PR กลับ upstream ต้องรอคำสั่งเจ้าของเท่านั้น** — ห้าม agent สร้าง/ส่ง/เตรียม PR
    เองไม่ว่ากรณีใด (สำหรับ GLQA: แม้ upstream จะตอบตกลงใน issue #1 ก็ยังต้องรอคำสั่งก่อนเริ่ม PR แรก)
+
+## Game Tool contract — `Game_Extractors/<Game>/tool.json`
+
+ทุกโฟลเดอร์เกมต้องมี `tool.json` (manifest ที่ THub-Launcher อ่านเพื่อรันเครื่องมือผ่าน
+subprocess — spec เต็มที่ `../docs/spec-game-tools.md`):
+
+- คีย์หลัก: `game` · `display` · `file_extensions` · `unpack_cmd` · `pack_cmd`
+  - CLI มาตรฐาน: `unpacker <input> <output_csv>` / `packer <original> <csv> <output>`
+    · exit 0 = สำเร็จ, ≥1 = พัง (เหตุผลออก stderr)
+  - placeholder อนุญาตเฉพาะ: `{input}` `{output_csv}` `{original}` `{csv}` `{output}`
+  - `pack_cmd: null` เฉพาะเกมที่ pack กลับไม่ได้จริง (+ `notes_th` อธิบาย)
+- คีย์ optional: **`line_break`: `"zwsp" | "hairspace" | "space"`** — ชนิดจุดตัดบรรทัด
+  ที่เอนจินของเกมนั้นต้องการตอน Thai Wrap (ผู้บริโภคคือโหมด `auto` ฝั่ง THL —
+  resolution ชั้นแรก, ดู `../docs/spec-thaiwrap-bridge.md` ระยะสอง)
+
+**⛔ กติกา `line_break`: เติมเฉพาะค่าที่พิสูจน์จากเกมจริง** (ใช้จริงในเกมแล้วเห็นผล หรือคัมภีร์
+ระบุชัด) — เกมที่ยังไม่พิสูจน์ **omit ฟิลด์นี้ไว้ ห้ามเดาใส่** เพราะโหมด auto เชื่อค่านี้เป็น
+ชั้นแรก · เมื่อเจ้าของยืนยันพฤติกรรมจริงของเกมใด ให้เติม/แก้ฟิลด์นี้ **commit เดียวจบ**
+· สถานะปัจจุบัน: ทั้ง 8 เกมยังไม่มีเกมไหนได้รับการพิสูจน์ → `tool.json` ทุกไฟล์ omit ฟิลด์นี้
 
 ## ⚠️ ข้อควรรู้ก่อนส่งมอบ
 

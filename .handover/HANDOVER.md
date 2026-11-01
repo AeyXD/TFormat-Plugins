@@ -1,8 +1,10 @@
 # HANDOVER — TFormat-Plugins
 
-**snapshot:** 2026-10-31 (ค่ำ) · เสร็จ: docs commit · Phase 0–2 (แผนเดิม) · **Phase A
-(game-tool contract ตาม `../docs/spec-game-tools.md`) — manifest ครบ 8/8 เกม** · รายละเอียด
-งานเก่าดูใน git log ของวันเดียวกัน
+**snapshot:** 2026-11-01 · เสร็จ: docs commit · Phase 0–2 (แผนเดิม) · Phase A (game-tool
+contract — manifest 8/8 เกม) · **Phase A2 (ฟิลด์ `line_break` ตาม
+`../docs/spec-thaiwrap-bridge.md` ระยะสอง — เพิ่มเข้า contract ใน AGENTS.md แล้ว
+แต่ omit ใน tool.json ทั้ง 8 เกมเพราะยังไม่มีเกมไหนพิสูจน์จากการใช้จริง)** ·
+รายละเอียดงานเก่าดูใน git log
 **สถานะ git:** `main` sync origin · กฎ ⛔ ห้าม agent ทำ PR กลับ upstream เอง (ดู AGENTS.md ข้อ 6)
 
 ## บริบท
@@ -37,6 +39,14 @@
      Fantasian/sample_meta.json, Wasteland2/sample.txt (utf-16)}`
    - หมายเหตุ: MetroExodus manifest ชี้ lng_tool (เส้นทาง bypass SDK) —
      MetroExodus_unpacker/packer.py เป็นเส้นทาง SDK เก่า เก็บไว้เพื่ออ้างอิง
+1b. **Phase A2 เสร็จ (2026-11-01)** — เพิ่มหัวข้อ "Game Tool contract" ลง AGENTS.md ของ repo:
+   คีย์หลักของ `tool.json` + CLI convention + **ฟิลด์ optional `line_break`
+   (`zwsp|hairspace|space`)** สำหรับ Thai Wrap โหมด auto ฝั่ง THL (resolution ชั้นแรก)
+   พร้อมกติกา ⛔ "เติมเฉพาะค่าที่พิสูจน์จากเกมจริง — ยังไม่พิสูจน์ = omit ห้ามเดาใส่,
+   ยืนยันแล้วแก้ commit เดียวจบ" · **tool.json ทั้ง 8 ไฟล์ไม่ถูกแตะ (omit ครบ)** ·
+   ตรวจ 33/33 ผ่าน: JSON valid 8 ไฟล์ + ไม่มี line_break หลุดเข้า + manifest structure
+   + root parser header + Boltgun round-trip ยังผ่าน · **THL เริ่ม Phase B2 ได้**
+   (ย้ำ: ทุกเกมตอนนี้ resolve ไป fallback ตารางนามสกุล — ยังไม่มีค่าจาก manifest เลย)
 2. **แผนแก้ไข Phase 0–6 เดิม**: ✅ 0 ✅ 1 ✅ 2 · ⏳ เหลือ 3–6 (path ฮาร์ดโค้ด (Avowed/
    Outpost manifest ระบุใน notes_th ว่า path ยังฮาร์ดโค้ด — Phase 3 ยังจำเป็น) →
    json deploy-back → ระบบทดสอบ unittest (ควรยกชุดทดสอบ Phase A เข้าไปด้วย) →
