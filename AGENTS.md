@@ -19,12 +19,16 @@
 
 1. **สัญญา parser** — ทุก parser ต้องมีฟังก์ชัน
    `convert_to_csv(filepath, parent_widget=None)` คืน **absolute path ของ CSV**
-   schema `ID, Source, Translation, AI_Reference` (utf-8-sig) · ใช้ `ID` แบบ
-   `namespace::key::hash` เพื่อ deploy กลับได้ · เรียกแบบ `parent_widget=None`
-   ต้องทำงานได้ (ไม่มี UI ก็ต้องรัน)
+   schema `ID, Source, Translation, AI_Reference` (utf-8-sig) · ใช้ `ID` ที่ deploy
+   กลับได้ — รูปแบบ `namespace::key::hash` หรือหมุดเทียบเท่าของฟอร์แมตนั้น
+   (เช่น `file:offset` ของ Telltale, `srt::<idx>::<start_ms>::<end_ms>` ของ Subtitles) ·
+   เรียกแบบ `parent_widget=None` ต้องทำงานได้ (ไม่มี UI ก็ต้องรัน) ·
+   **ตัวอ่าน CSV ทุกตัวต้อง tolerate header เก่า** (ตาม pattern helper `csv_col`
+   ที่ยอมรับ `original/translation`/`ต้นฉบับ/คำแปล`) และ**ห้ามเงียบ**เมื่อไม่เจอ
+   คอลัมน์ — ต้องแจ้ง error ชัด ๆ กัน silent no-op ที่ทำคำแปลหายเงียบ ๆ
 2. **ไฟล์เดี่ยว standalone + stdlib เท่านั้น** — แต่ละ parser ถูกดาวน์โหลดแยกจาก cloud
    แล้วรันทันที จึงห้าม import ข้ามไฟล์ parser อื่น และห้ามเพิ่ม dependency ภายนอก
-   (ตอนนี้ทั้ง repo ใช้แค่ `csv/json/os/re/struct`)
+   — ใช้ได้เฉพาะไลบรารีมาตรฐานของ Python (ห้ามทุกอย่างที่มาจาก pip)
 3. **อย่าทำลายความสามารถ deploy กลับ** — CSV ที่คืนมาต้องแปลงกลับเป็นฟอร์แมตเดิมได้
    (เก็บ meta ที่จำเป็นไว้คู่กัน เช่น `_meta.json` ตาม pattern ของ parser ที่มีอยู่)
 4. **fork ↔ upstream** — push ได้เฉพาะ origin (`AeyXD/TFormat-Plugins`) · ส่งกลับ
@@ -52,19 +56,19 @@ subprocess — spec เต็มที่ `../docs/spec-game-tools.md`):
 **⛔ กติกา `line_break`: เติมเฉพาะค่าที่พิสูจน์จากเกมจริง** (ใช้จริงในเกมแล้วเห็นผล หรือคัมภีร์
 ระบุชัด) — เกมที่ยังไม่พิสูจน์ **omit ฟิลด์นี้ไว้ ห้ามเดาใส่** เพราะโหมด auto เชื่อค่านี้เป็น
 ชั้นแรก · เมื่อเจ้าของยืนยันพฤติกรรมจริงของเกมใด ให้เติม/แก้ฟิลด์นี้ **commit เดียวจบ**
-· สถานะปัจจุบัน: ทั้ง 9 โฟลเดอร์ (8 เกม + Subtitles) ยังไม่มีตัวไหนได้รับการพิสูจน์ →
-`tool.json` ทุกไฟล์ omit ฟิลด์นี้
+(สถานะว่าเกมไหนพิสูจน์แล้วบ้างดูที่งานค้างใน HANDOVER)
 
 ## ⚠️ ข้อควรรู้ก่อนส่งมอบ
 
 TStudio ดึง plugin จาก URL ของ **upstream** ไม่ใช่ fork — plugin ใหม่ที่ push มาที่นี่
-**ยังไม่ถึงมือผู้ใช้ TStudio จนกว่าจะ merge กลับ upstream**
+**ยังไม่ถึงมือผู้ใช้ TStudio จนกว่าจะ merge กลับ upstream** (สำเนา THub-Launcher
+บางสำเนาตั้งค่าชี้ fork ตรง ๆ — พฤติกรรมต่างกันตามเครื่อง) · กลไกโหลด plugin ของ
+TStudio ใช้ **cache ท้องถิ่น (`CustomParsers/`) ชนะ cloud** — ผู้ใช้ที่เคยโหลด plugin
+เก่าไว้จะได้ตัวเก่าต่อไปจนกว่าจะล้างแคช → plugin เวอร์ชันใหม่จึงไม่ถึงทุกเครื่องทันที
 
 `AGENTS.md` เป็นของ **fork เท่านั้น** — ห้ามรวมไฟล์นี้ใน PR กลับ upstream เด็ดขาด ·
 `.handover` เป็น symlink ไป repo รวมส่วนตัว `../../handover-notes/TFormat-Plugins`
-ไม่ถูก track ใน git ของ repo นี้ (กันไว้ใน `.gitignore`) — การเขียน HANDOVER จึงไม่พัง
-ความเป็นส่วนตัวของ repo สาธารณะนี้อีก (ประวัติเดิมก่อน 2 พ.ย. ยังค้างอยู่ใน git history
-จนกว่าเจ้าของสั่งล้างแยก)
+ไม่ถูก track ใน git ของ repo นี้ (กันไว้ใน `.gitignore`)
 
 ## ทดสอบ (ไม่ต้องมี UI)
 
