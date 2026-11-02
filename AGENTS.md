@@ -1,6 +1,8 @@
 # AGENTS.md — คู่มือสำหรับ AI agent ที่ทำงานใน repo นี้
 
-> อ่านก่อนแตะโค้ดทุกครั้ง · สถานะงานล่าสุดดู `.handover/HANDOVER.md` · แผนที่ ecosystem ทั้งระบบดู `../docs/architecture.md` (workspace "THub Studio")
+> อ่านก่อนแตะโค้ดทุกครั้ง · สถานะงานล่าสุดดู `.handover/HANDOVER.md` (symlink → repo รวมส่วนตัว
+> `handover-notes` — commit HANDOVER ที่ repo นั้น · แนวทางเขียน: `../../handover-notes/GUIDE.md`)
+> · แผนที่ ecosystem ทั้งระบบดู `../docs/architecture.md` (workspace "THub Studio")
 
 ## repo นี้คืออะไร
 
@@ -28,7 +30,8 @@
 4. **fork ↔ upstream** — push ได้เฉพาะ origin (`AeyXD/TFormat-Plugins`) · ส่งกลับ
    `memolyviza2012-max/TFormat-Plugins` ด้วย PR เท่านั้น หลังเจ้าของตัดสินใจ
 5. **ขอบเขตการทำงาน** — แตะเฉพาะไฟล์ใน repo นี้ (เอกสาร workspace เป็นของ workspace task) ·
-   จบ session ที่กระทบงาน → อัปเดต `.handover/HANDOVER.md` ของ repo นี้
+   จบ session ที่กระทบงาน → อัปเดต `.handover/HANDOVER.md` — อยู่ใน repo รวม `handover-notes`
+   (ส่วนตัว) จึงต้อง **commit + push ที่ repo นั้น** ไม่ใช่ที่ repo นี้
 6. **⛔ ส่ง PR กลับ upstream ต้องรอคำสั่งเจ้าของเท่านั้น** — ห้าม agent สร้าง/ส่ง/เตรียม PR
    เองไม่ว่ากรณีใด (สำหรับ GLQA: แม้ upstream จะตอบตกลงใน issue #1 ก็ยังต้องรอคำสั่งก่อนเริ่ม PR แรก)
 
@@ -57,8 +60,11 @@ subprocess — spec เต็มที่ `../docs/spec-game-tools.md`):
 TStudio ดึง plugin จาก URL ของ **upstream** ไม่ใช่ fork — plugin ใหม่ที่ push มาที่นี่
 **ยังไม่ถึงมือผู้ใช้ TStudio จนกว่าจะ merge กลับ upstream**
 
-`AGENTS.md` และ `.handover/` เป็นของ **fork เท่านั้น** — ห้ามรวมสองรายการนี้
-ใน PR กลับ upstream เด็ดขาด
+`AGENTS.md` เป็นของ **fork เท่านั้น** — ห้ามรวมไฟล์นี้ใน PR กลับ upstream เด็ดขาด ·
+`.handover` เป็น symlink ไป repo รวมส่วนตัว `../../handover-notes/TFormat-Plugins`
+ไม่ถูก track ใน git ของ repo นี้ (กันไว้ใน `.gitignore`) — การเขียน HANDOVER จึงไม่พัง
+ความเป็นส่วนตัวของ repo สาธารณะนี้อีก (ประวัติเดิมก่อน 2 พ.ย. ยังค้างอยู่ใน git history
+จนกว่าเจ้าของสั่งล้างแยก)
 
 ## ทดสอบ (ไม่ต้องมี UI)
 

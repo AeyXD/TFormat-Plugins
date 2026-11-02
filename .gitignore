@@ -16,3 +16,7 @@ __pycache__/
 *_patched.*
 *_tstudio.csv
 output_*.csv
+
+# HANDOVER อยู่ใน repo รวมส่วนตัว (handover-notes) — symlink ไม่ถูก track
+# (git มอง symlink เป็นไฟล์ จึงต้องเขียนชื่อไม่มี / ท้าย)
+.handover
